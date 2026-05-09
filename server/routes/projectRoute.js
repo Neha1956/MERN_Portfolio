@@ -1,0 +1,15 @@
+import express from "express";
+import authMiddleware from "../middleware/authMiddleware.js";
+import adminMiddleware from "../middleware/adminMiddleware.js";
+import  addProject  from "../controllers/projectControllers/addProject.js";
+import getProjects  from "../controllers/projectControllers/getProject.js";
+import  updateProject  from "../controllers/projectControllers/updateProject.js";
+import  deleteProject from "../controllers/projectControllers/deleteProject.js";
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
+const router = express.Router();
+router.post("/add", authMiddleware, adminMiddleware, upload.single("image"), addProject);
+router.get("/get", getProjects);
+router.put("/update/:id", authMiddleware, adminMiddleware, upload.single("image"), updateProject);
+router.delete("/delete/:id", authMiddleware, adminMiddleware, deleteProject);
+export default router;
