@@ -1,45 +1,48 @@
 import { useState } from "react";
+
 import { motion } from "motion/react";
 import {
-  FiSettings,
+  
   FiLogOut,
   FiMessageSquare,
   FiFolder,
   FiUser,
   FiBell,
 } from "react-icons/fi";
+//import ProjectActions from "../adminPages/manageProjects/ProjectActions";
+import { useNavigate } from "react-router-dom";
+import Message from "../adminPages/Message";
+
 
 const AdminDashboard = () => {
+    const navigate = useNavigate();
   const [messageCount, setMessageCount] = useState(5);
-  const [showMessages, setShowMessages] = useState(false);
+ // const [showMessages, setShowMessages] = useState(false);
 
-  const messages = [
+ /* const messages = [
     { id: 1, sender: "John Doe", text: "Hi, interested in your services", time: "5m ago" },
     { id: 2, sender: "Jane Smith", text: "Great portfolio! Let's connect", time: "12m ago" },
     { id: 3, sender: "Bob Wilson", text: "Can you work on my project?", time: "1h ago" },
     { id: 4, sender: "Alice Johnson", text: "Love your work style", time: "2h ago" },
     { id: 5, sender: "Charlie Brown", text: "Available for freelance?", time: "3h ago" },
   ];
-
+*/
   const menuItems = [
     {
       icon: FiFolder,
       label: "Manage Projects",
       color: "from-cyan-400 to-blue-500",
       description: "Create, edit & delete projects",
+      onclick: () => navigate("/project-actions")
     },
     {
       icon: FiUser,
       label: "Manage Profile",
       color: "from-violet-400 to-purple-500",
       description: "Update your profile info",
-    },
-    {
-      icon: FiSettings,
-      label: "Settings",
-      color: "from-pink-400 to-red-500",
-      description: "Customize your preferences",
-    },
+      onclick: () => navigate("/profile-actions")
+    }
+    
   ];
 
   const containerVariants = {
@@ -131,7 +134,7 @@ const AdminDashboard = () => {
                 className="relative"
               >
                 <button
-                  onClick={() => setShowMessages(!showMessages)}
+                  onClick={() => navigate("/messages")}
                   className="p-3 hover:bg-white/10 rounded-lg transition-colors relative"
                 >
                   <FiMessageSquare size={24} className="text-violet-400" />
@@ -146,36 +149,8 @@ const AdminDashboard = () => {
                   )}
                 </button>
 
-                {/* Messages Dropdown */}
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={showMessages ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className={`absolute right-0 mt-2 w-80 bg-slate-900 border border-white/20 rounded-2xl shadow-2xl z-50 ${
-                    !showMessages ? "pointer-events-none" : ""
-                  }`}
-                >
-                  <div className="p-4 border-b border-white/10">
-                    <h3 className="font-bold text-lg">Messages ({messageCount})</h3>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {messages.map((msg, idx) => (
-                      <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
-                      >
-                        <div className="flex justify-between items-start">
-                          <p className="font-semibold text-cyan-300">{msg.sender}</p>
-                          <span className="text-xs text-slate-400">{msg.time}</span>
-                        </div>
-                        <p className="text-slate-300 text-sm mt-1">{msg.text}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
+               
+               
               </motion.div>
 
               {/* Logout Button */}
@@ -248,6 +223,7 @@ const AdminDashboard = () => {
                           <motion.button
                             whileHover={{ x: 8 }}
                             className="mt-4 inline-flex items-center gap-2 text-cyan-400 font-semibold hover:text-cyan-300 transition-colors"
+                            onClick={item.onclick}
                           >
                             Access Now →
                           </motion.button>
@@ -298,6 +274,8 @@ const AdminDashboard = () => {
         </main>
 
       </div>
+      
+     
     </div>
   );
 };

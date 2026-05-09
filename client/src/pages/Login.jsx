@@ -1,7 +1,44 @@
 //import React from 'react'
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/authSlice";
+import { toast } from "react-toastify";
+import axiosAPI from "../api/axiosAPI"
+import { useState } from "react";
 function Login({ setShowModal, setShowSignupModal }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+const[form,setForm]=useState({
+  email:"",
+  password:"",
+  role:""
+})
+const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+try {
+  if (!form.email || !form.password || !form.role) {
+    toast.error("Please fill in all fields.");
+    return;
+  }
+  const res = await axiosAPI.post("/users/login", form);
+  dispatch(login(res.data));
+  toast.success("Login successful!");
+  setShowModal(false);
+ if (form.role === "admin") {
+  navigate("/admin");
+} else {
+  navigate("/home");
+}
+} catch (error) {
+  console.error("Login error:", error);
+  toast.error("Login failed. Please check your credentials and try again.");
+}
+}
+
   return (
     <>
  <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-950/80 px-4 py-6">
@@ -19,28 +56,43 @@ function Login({ setShowModal, setShowSignupModal }) {
               <h2 className="mt-3 text-3xl font-semibold text-white">Sign in to continue</h2>
             </div>
 
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <label className="block text-sm font-medium text-slate-200">Email</label>
               <input
+              name="email"
                 type="email"
+                 value={form.email}
+              onChange={handleChange}
                 placeholder="you@example.com"
                 className="w-full rounded-3xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
               />
               <label className="block text-sm font-medium text-slate-200">Password</label>
               <input
+              name="password"
                 type="password"
+                value={form.password}
+                onChange={handleChange}
                 placeholder="Enter password"
                 className="w-full rounded-3xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
               />
               <label className="block text-sm font-medium text-slate-200">Role</label>
-              <select className="w-full rounded-3xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
-                <option value="user" className="bg-slate-950 text-slate-100">User</option>
-                <option value="admin" className="bg-slate-950 text-slate-100">Admin</option>
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+                className="w-full rounded-3xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
+              >
+                <option value="" className="bg-slate-950 text-slate-100">Select Role</option>
+                <option value="user" className="bg-slate-950 text-slate-100" >
+                  User
+                </option>
+                <option value="admin" className="bg-slate-950 text-slate-100">
+                  Admin
+                </option>
               </select>
 
               <button
-              onClick={()=>navigate("/home")}
-                type="button"
+                type="submit"
                 className="w-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 px-4 py-3 text-base font-semibold text-slate-950 transition hover:brightness-105"
               >
                 Continue
@@ -66,5 +118,4 @@ function Login({ setShowModal, setShowSignupModal }) {
     </>
   )
 }
-
-export default Login
+export default Login;
