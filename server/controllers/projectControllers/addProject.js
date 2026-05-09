@@ -25,9 +25,13 @@ import Project from "../../models/project.js"
       techStack,
       githubLink,
       liveDemo,
-      image: req.file ? req.file.path : "",
+image: req.file
+  ? req.file.path.replace(/\\/g, "/")
+  : "",
     });
-
+   // console.log("image path:", req.file.path.replace(/\\/g, "/"));
+//console.log("file:", req.file);
+//console.log("newProject:", newProject);
     res.status(201).json({
       message: "Project added successfully",
       project: newProject,

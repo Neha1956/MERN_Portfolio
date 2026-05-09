@@ -19,10 +19,22 @@ const projectSlice = createSlice({
         (project) => project._id !== action.payload
       );
     },
+
+    updateProjectState: (state, action) => {
+      state.projects = state.projects.map((project) =>
+        project._id === action.payload._id
+          ? action.payload
+          : project
+      );
+    },
   },
 });
 
-export const { setProjects, addProject, removeProject } =
-  projectSlice.actions;
+export const {
+  setProjects,
+  addProject,
+  removeProject,
+  updateProjectState,
+} = projectSlice.actions;
 
 export default projectSlice.reducer;

@@ -4,46 +4,65 @@ import { FiUpload, FiLink, FiGithub, FiX } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { addProject } from "../../redux/projectSlice";
 import  axiosAPI  from "../../api/axiosAPI";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const AddProjects = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
   const [form, setForm] = useState({
     title: "",
     description: "",
-    tech: "",
-    github: "",
-    live: "",
+    techStack: "",
+    githubLink: "",
+    liveLink: "",
+    
   });
+  const [image, setImage] = useState(null);
+
+  const handleImageChange = (e) => {
+  setImage(e.target.files[0]);
+};
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-try{
-    if (!form.title || !form.description) {
-        alert("Please fill in all required fields.");
-        return;
-      }
+  try {
+    const formData = new FormData();
+
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("techStack", form.techStack);
+    formData.append("githubLink", form.githubLink);
+    formData.append("liveLink", form.liveLink);
+    formData.append("image", image);
+
     const res = await axiosAPI.post(
-    "/projects/add",
-    form
-  );
+      "/projects/add",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
-  dispatch(addProject(res.data));
-} catch (error) {
-    console.error("Error adding project:", error);
-    alert("Failed to add project. Please try again.");
-    return;
-}
-
-
+    dispatch(addProject(res.data));
+    toast.success("Project added successfully!");
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to add project");
+  }
 
     console.log("Project Data:", form);
-    alert("Project added successfully!");
-    setForm({ title: "", description: "", tech: "", github: "", live: "" });
+    //toast.success("Project added successfully!");
+    setForm({ title: "", description: "", techStack: "", githubLink: "", liveLink: "" });
+    setImage(null);
   };
 
   return (
@@ -57,7 +76,7 @@ try{
           <h2 className="text-2xl md:text-3xl font-bold text-cyan-400">
             Add New Project
           </h2>
-          <button className="p-2 hover:bg-white/10 rounded-lg"  >
+          <button className="p-2 hover:bg-white/10 rounded-lg" onClick={() => navigate("/project-actions")}  >
             <FiX size={22} />
           </button>
         </div>
@@ -96,8 +115,8 @@ try{
             <label className="text-sm text-slate-300">Tech Stack</label>
             <input
               type="text"
-              name="tech"
-              value={form.tech}
+              name="techStack"
+              value={form.techStack}
               onChange={handleChange}
               placeholder="React, Node, MongoDB..."
               className="w-full mt-1 p-3 bg-slate-900 border border-white/10 rounded-xl focus:border-cyan-400 outline-none"
@@ -112,8 +131,8 @@ try{
                 <FiGithub />
                 <input
                   type="url"
-                  name="github"
-                  value={form.github}
+                  name="githubLink"
+                  value={form.githubLink}
                   onChange={handleChange}
                   placeholder="GitHub link"
                   className="w-full bg-transparent outline-none"
@@ -127,8 +146,8 @@ try{
                 <FiLink />
                 <input
                   type="url"
-                  name="live"
-                  value={form.live}
+                  name="liveLink"
+                  value={form.liveLink}
                   onChange={handleChange}
                   placeholder="Live project link"
                   className="w-full bg-transparent outline-none"
@@ -137,19 +156,39 @@ try{
             </div>
           </div>
 
-          {/* Upload Button (UI only) */}
-          <div className="border border-dashed border-white/20 rounded-xl p-6 text-center hover:border-cyan-400 transition">
-            <FiUpload className="mx-auto text-3xl text-cyan-400" />
-            <p className="text-sm text-slate-400 mt-2">
-              Drag & drop image or click to upload
-            </p>
-          </div>
+          {/* Upload Button */}
+         <div className="border border-dashed border-white/20 rounded-xl p-6 text-center hover:border-cyan-400 transition">
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="hidden"
+    id="upload-image"
+  />
+
+  <label
+    htmlFor="upload-image"
+    className="flex flex-col items-center gap-2 cursor-pointer"
+  >
+    <FiUpload size={24} />
+    <span className="text-sm text-slate-400">
+      {image ? "Change Image" : "Upload Project Image"}
+    </span>
+  </label>
+
+  {image && (
+    <div className="mt-4 text-sm text-cyan-400 font-medium">
+      Selected: {image.name}
+    </div>
+  )}
+</div>
 
           {/* Submit */}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             type="submit"
+            
             className="w-full py-3 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-xl font-semibold text-lg shadow-lg"
           >
             Add Project

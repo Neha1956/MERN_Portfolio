@@ -19,7 +19,7 @@ const projectSchema=new mongoose.Schema({
     liveDemo:{
         type:String,
     },
-    imageUrl:{
+    image:{
         type:String,
     },
     date:{

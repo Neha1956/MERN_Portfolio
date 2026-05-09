@@ -10,12 +10,14 @@ import AddProjects from "./adminPages/manageProjects/AddProjects";
 import ProjectAction from "./adminPages/manageProjects/ProjectActions";
 import ProfileAction from "./adminPages/manageProfile/ProfileActions";
 import Message from "./adminPages/Message";
+import UpdateProject from "./adminPages/manageProjects/UpdateProject";
 
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/update-project/:id" element={<UpdateProject />} />
          <Route path="/messages" element={<Message/>}/>
          <Route path="/profile-actions" element={<ProfileAction/>}/>
          <Route path="/project-actions" element={<ProjectAction/>}/>
