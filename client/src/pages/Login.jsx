@@ -1,6 +1,7 @@
 //import React from 'react'
-
+import { useNavigate } from "react-router-dom";
 function Login({ setShowModal, setShowSignupModal }) {
+  const navigate = useNavigate();
   return (
     <>
  <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-950/80 px-4 py-6">
@@ -38,6 +39,7 @@ function Login({ setShowModal, setShowSignupModal }) {
               </select>
 
               <button
+              onClick={()=>navigate("/home")}
                 type="button"
                 className="w-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 px-4 py-3 text-base font-semibold text-slate-950 transition hover:brightness-105"
               >

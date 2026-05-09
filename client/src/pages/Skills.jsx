@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { FaReact, FaNode, FaDatabase, FaGitAlt, FaDocker } from "react-icons/fa";
+import { FaReact, FaNode, FaGitAlt, FaDocker } from "react-icons/fa";
 import { SiTypescript, SiMongodb, SiTailwindcss, SiJavascript, SiExpress, SiFirebase } from "react-icons/si";
 import Navbar from "../components/Navbar";
 
