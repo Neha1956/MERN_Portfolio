@@ -6,7 +6,7 @@ const initialState = {
   error: null,
 };
 
-const ProfileSlice = createSlice({
+const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
@@ -52,6 +52,6 @@ export const {
   deleteProfile,
   setLoading,
   setError,
-} = ProfileSlice.actions;
+} = profileSlice.actions;
 
-export default ProfileSlice.reducer;
+export default profileSlice.reducer;
