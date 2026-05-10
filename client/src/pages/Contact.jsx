@@ -1,27 +1,56 @@
 import { motion } from "motion/react";
 import { FiMail, FiPhone, FiMapPin, FiSend, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
 import Navbar from "../components/Navbar";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { postMessage } from "../redux/messageSlice";
+import { toast } from "react-toastify";
+import axiosAPI from "../api/axiosAPI";
+import { useEffect } from "react";
 
 const Contact = () => {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.message);
+const [profile, setProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+//console.log("Profile data in Contact page:", profile);
+
+  const fetchProfile = async () => {
+      try {
+        const res = await axiosAPI.get("/profile/get");
+        setProfile(res.data.profile.socialLinks || null);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+     useEffect(() => {
+
+    fetchProfile();
+    const interval = setInterval(fetchProfile, 50000); // Refresh every 50 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
   const contactInfo = [
     {
       icon: FiMail,
       label: "Email",
-      value: "your.email@example.com",
-      href: "mailto:your.email@example.com",
+      value: "nehagarhw5@gmail.com",
+      href: "mailto:nehagarhw5@gmail.com",
       color: "text-cyan-400",
     },
-    {
-      icon: FiPhone,
-      label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
-      color: "text-green-400",
-    },
+   
     {
       icon: FiMapPin,
       label: "Location",
-      value: "Your City, Country",
+      value: "Garhwa, India",
       href: "#",
       color: "text-pink-400",
     },
@@ -31,27 +60,50 @@ const Contact = () => {
     {
       icon: FiGithub,
       label: "GitHub",
-      url: "https://github.com/yourusername",
+      url: profile?.github || "#",
       color: "hover:text-gray-400",
     },
     {
       icon: FiLinkedin,
       label: "LinkedIn",
-      url: "https://linkedin.com/in/yourusername",
+      url: profile?.linkedin || "#",
       color: "hover:text-blue-400",
-    },
-    {
-      icon: FiTwitter,
-      label: "Twitter",
-      url: "https://twitter.com/yourusername",
-      color: "hover:text-sky-400",
-    },
+    }
+    
+   
   ];
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted");
+
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    try {
+      const result = await dispatch(postMessage(formData));
+      
+      if (result.type === postMessage.fulfilled.type) {
+        toast.success("Message sent successfully! 🎉");
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        });
+      } else {
+        toast.error(result.payload || "Failed to send message");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -187,6 +239,8 @@ const Contact = () => {
                       <input
                         type="text"
                         name="name"
+                        value={formData.name}
+                        onChange={handleChange}
                         placeholder="Your Name"
                         required
                         className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition-all duration-300"
@@ -200,6 +254,8 @@ const Contact = () => {
                       <input
                         type="email"
                         name="email"
+                        value={formData.email}
+                        onChange={handleChange}
                         placeholder="Your Email"
                         required
                         className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition-all duration-300"
@@ -211,21 +267,10 @@ const Contact = () => {
                     whileFocus={{ scale: 1.02 }}
                     className="relative"
                   >
-                    <input
-                      type="text"
-                      name="subject"
-                      placeholder="Subject"
-                      required
-                      className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition-all duration-300"
-                    />
-                  </motion.div>
-
-                  <motion.div
-                    whileFocus={{ scale: 1.02 }}
-                    className="relative"
-                  >
                     <textarea
                       name="message"
+                      value={formData.message}
+                      onChange={handleChange}
                       rows={6}
                       placeholder="Your Message"
                       required
@@ -237,10 +282,11 @@ const Contact = () => {
                     whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(34, 197, 94, 0.3)" }}
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    className="w-full py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-bold rounded-xl transition-all duration-300 hover:shadow-xl flex items-center justify-center gap-2 group"
+                    disabled={loading}
+                    className="w-full py-4 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-950 font-bold rounded-xl transition-all duration-300 hover:shadow-xl flex items-center justify-center gap-2 group disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <FiSend className="group-hover:translate-x-1 transition-transform" size={20} />
-                    Send Message
+                    {loading ? "Sending..." : "Send Message"}
                   </motion.button>
                 </form>
               </motion.div>

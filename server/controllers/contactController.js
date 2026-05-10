@@ -44,3 +44,27 @@ export const getMessages = async (req, res) => {
     });
   }
 };
+
+//delete message
+export const deleteMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedMessage = await Contact.findByIdAndDelete(id);
+
+    if (!deletedMessage) {
+      return res.status(404).json({
+        message: "Message not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Message deleted successfully",
+      data: deletedMessage,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};

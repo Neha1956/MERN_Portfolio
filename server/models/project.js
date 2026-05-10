@@ -16,7 +16,7 @@ const projectSchema=new mongoose.Schema({
         type:String,    
 
     },
-    liveDemo:{
+    liveLink:{
         type:String,
     },
     image:{

@@ -1,31 +1,52 @@
 import { motion } from "motion/react";
 import { FaReact, FaNode, FaGitAlt, FaDocker } from "react-icons/fa";
 import { SiTypescript, SiMongodb, SiTailwindcss, SiJavascript, SiExpress, SiFirebase } from "react-icons/si";
+//import { useSelector } from "react-redux";
+import axiosAPI from "../api/axiosAPI";
+import { useEffect,useState } from "react";
+//import { setProfile } from "../redux/profileSlice";
+import { useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
 
 const Skills = () => {
-  const skills = [
-    { name: "React", icon: FaReact, color: "text-cyan-400", level: "Advanced" },
-    { name: "Node.js", icon: FaNode, color: "text-green-400", level: "Advanced" },
-    { name: "MongoDB", icon: SiMongodb, color: "text-green-500", level: "Intermediate" },
-    { name: "TypeScript", icon: SiTypescript, color: "text-blue-400", level: "Intermediate" },
-    { name: "Tailwind CSS", icon: SiTailwindcss, color: "text-cyan-300", level: "Advanced" },
-    { name: "JavaScript", icon: SiJavascript, color: "text-yellow-400", level: "Advanced" },
-    { name: "Express.js", icon: SiExpress, color: "text-gray-400", level: "Intermediate" },
-    { name: "Git", icon: FaGitAlt, color: "text-orange-500", level: "Advanced" },
-    { name: "Docker", icon: FaDocker, color: "text-blue-500", level: "Beginner" },
-    { name: "Firebase", icon: SiFirebase, color: "text-yellow-500", level: "Intermediate" },
-  ];
+  //const profile = useSelector((state) => state.profile?.profile);
+  const dispatch = useDispatch();
+  const [profile, setProfile] = useState(null);
 
-  const getLevelColor = (level) => {
-    switch (level) {
-      case "Advanced": return "bg-green-500";
-      case "Intermediate": return "bg-yellow-500";
-      case "Beginner": return "bg-red-500";
-      default: return "bg-gray-500";
+   // GET PROFILE
+  const getProfile = async () => {
+    try {
+      const res = await axiosAPI.get("/profile/get");
+      dispatch(setProfile(res.data.profile));
+    } catch (error) {
+      console.log("Error fetching profile:", error);
     }
   };
 
+  useEffect(() => {
+    const interval = setInterval(getProfile, 50000); // Refresh every 50 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+    getProfile();
+  }, []);
+
+
+ // const IMAGE_URL = "http://localhost:5000/";
+  //const skillsData = profile?.skills;
+ // console.log("Skills from profile:", skillsData);
+  const skills = [
+    { name: "React", icon: FaReact, color: "text-cyan-400",  },
+    { name: "Node.js", icon: FaNode, color: "text-green-400", },
+    { name: "MongoDB", icon: SiMongodb, color: "text-green-500", },
+   // { name: "TypeScript", icon: SiTypescript, color: "text-blue-400", level: "Intermediate" },
+    { name: "Tailwind CSS", icon: SiTailwindcss, color: "text-cyan-300", },
+    { name: "JavaScript", icon: SiJavascript, color: "text-yellow-400", },
+    { name: "Express.js", icon: SiExpress, color: "text-gray-400", },
+    { name: "Git", icon: FaGitAlt, color: "text-orange-500", },
+    { name: "Docker", icon: FaDocker, color: "text-blue-500", },
+   // { name: "Firebase", icon: SiFirebase, color: "text-yellow-500", level: "Intermediate" },
+  ];
+
+ 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
       {/* Animated background blobs */}
@@ -84,14 +105,53 @@ const Skills = () => {
                     <div className="text-center">
                       <span className="text-sm font-semibold text-slate-300 block">{skill.name}</span>
                       <div className="flex items-center gap-2 mt-2">
-                        <div className={`w-2 h-2 rounded-full ${getLevelColor(skill.level)}`}></div>
-                        <span className="text-xs text-slate-400">{skill.level}</span>
+                       
                       </div>
                     </div>
                   </motion.div>
                 );
               })}
             </div>
+         <div className="mt-6">
+  <h3 className="text-lg font-semibold text-white mb-4">
+  Key  Skills 
+  </h3>
+
+  <div className="flex flex-wrap gap-3">
+    {(() => {
+      try {
+        let skills = profile.skills?.join(",");
+
+        while (typeof skills === "string") {
+          skills = JSON.parse(skills);
+        }
+
+        return skills.map((skill, idx) => (
+          <span
+            key={idx}
+            className="px-4 py-2 rounded-full text-sm font-medium
+            bg-gradient-to-r from-cyan-500/20 to-blue-500/20
+            text-cyan-300 border border-cyan-400/30
+            shadow-md shadow-cyan-500/10
+            hover:scale-105 hover:border-cyan-300 hover:text-white
+            transition-all duration-300 cursor-pointer"
+          >
+            {skill}
+          </span>
+        ));
+      } catch (error) {
+        console.log(error);
+        return (
+          <span className="text-slate-400 text-sm">
+            Skills not available
+          </span>
+        );
+      }
+    })()}
+  </div>
+</div>            
+              
+            
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}

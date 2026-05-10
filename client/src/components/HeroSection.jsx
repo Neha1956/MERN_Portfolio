@@ -1,15 +1,65 @@
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { FiDownload, FiArrowRight, FiGithub, FiLinkedin, FiTwitter, FiMail } from "react-icons/fi";
+import { FiDownload, FiArrowRight, FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import TypingAnimation from "../components/TypingAnimation";
+import axiosAPI from "../api/axiosAPI";
+
+const API_BASE_URL = "http://localhost:5000"; // Fallback URL
 
 const HeroSection = () => {
-  const profileImage = "https://via.placeholder.com/300"; // Replace with your actual profile image URL
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+ 
+    const fetchProfile = async () => {
+      try {
+        const res = await axiosAPI.get("/profile/get");
+        setProfile(res.data.profile || null);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+     useEffect(() => {
+
+    fetchProfile();
+    const interval = setInterval(fetchProfile, 50000); // Refresh every 50 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
+  const displayProfile = profile || {
+    fullName: "Your Name",
+    title: "Full Stack Developer",
+    about:
+      "I'm a passionate Full Stack Developer specializing in modern web technologies. I love creating beautiful, responsive web applications that solve real-world problems.",
+    socialLinks: {
+      github: "https://github.com/yourusername",
+      linkedin: "https://linkedin.com/in/yourusername",
+    },
+    contact: {
+      email: "your.email@example.com",
+    },
+    profileImage: null,
+  };
+
+   
+
+  const profileImage = displayProfile.profileImage
+  ? `${API_BASE_URL}/${displayProfile.profileImage.replace(/\\/g, "/")}`
+  : "";
+
+   // console.log("Profile Image URL:", profileImage);
 
   const resumeDownload = () => {
-    // Replace with your actual resume URL
+    const resumeUrl = displayProfile.resume
+      ? `${API_BASE_URL}/${displayProfile.resume}`
+      : "/resume.pdf";
+
     const link = document.createElement("a");
-    link.href = "/resume.pdf"; // Make sure to place your resume in public folder
+    link.href = resumeUrl;
     link.download = "My_Resume.pdf";
     link.click();
   };
@@ -18,28 +68,21 @@ const HeroSection = () => {
     {
       icon: FiGithub,
       label: "GitHub",
-      url: "https://github.com/yourusername",
+      url: displayProfile.socialLinks?.github || "https://github.com/yourusername",
       color: "hover:text-gray-400",
       hoverBg: "hover:bg-gray-500/10",
     },
     {
       icon: FiLinkedin,
       label: "LinkedIn",
-      url: "https://linkedin.com/in/yourusername",
+      url: displayProfile.socialLinks?.linkedin || "https://linkedin.com/in/yourusername",
       color: "hover:text-blue-400",
       hoverBg: "hover:bg-blue-500/10",
     },
     {
-      icon: FiTwitter,
-      label: "Twitter",
-      url: "https://twitter.com/yourusername",
-      color: "hover:text-sky-400",
-      hoverBg: "hover:bg-sky-500/10",
-    },
-    {
       icon: FiMail,
       label: "Email",
-      url: "mailto:your.email@example.com",
+      url: `mailto:${displayProfile.contact?.email || "your.email@example.com"}`,
       color: "hover:text-pink-400",
       hoverBg: "hover:bg-pink-500/10",
     },
@@ -90,16 +133,23 @@ const HeroSection = () => {
 
             {/* Typing Animation */}
             <motion.div variants={itemVariants}>
-              <TypingAnimation text="Hi, I'm Your Name" speed={80} />
+              <TypingAnimation text={`Hi, I'm ${displayProfile.fullName}`} speed={80} />
             </motion.div>
+
+            {/* Title */}
+            <motion.p
+              variants={itemVariants}
+              className="text-xl md:text-2xl text-cyan-300 font-semibold"
+            >
+              {displayProfile.title}
+            </motion.p>
 
             {/* Description */}
             <motion.p
               variants={itemVariants}
               className="text-base md:text-lg text-slate-300 leading-relaxed"
             >
-              I'm a passionate Full Stack Developer specializing in modern web technologies. I love creating beautiful,
-              responsive web applications that solve real-world problems. Let's build something amazing together!
+              {displayProfile.about}
             </motion.p>
 
             {/* CTA Buttons */}
@@ -175,7 +225,8 @@ const HeroSection = () => {
               {/* Profile Image Container */}
               <div className="relative bg-gradient-to-br from-cyan-400 to-violet-500 p-1 rounded-3xl overflow-hidden">
                 <div className="bg-slate-900 rounded-3xl p-8 relative z-10">
-                  <motion.img
+                  
+                      <motion.img
                     src={profileImage}
                     alt="Profile"
                     className="w-64 h-64 rounded-2xl object-cover"
@@ -202,9 +253,9 @@ const HeroSection = () => {
           className="grid grid-cols-3 gap-4 md:gap-8 mt-16 pt-16 border-t border-white/10"
         >
           {[
-            { number: "50+", label: "Projects" },
+            { number: "30+", label: "Projects" },
             { number: "100+", label: "Happy Clients" },
-            { number: "5+", label: "Years Experience" },
+            { number: "student", label: "fresher" },
           ].map((stat, index) => (
             <motion.div
               key={index}

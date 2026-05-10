@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX,FiRefreshCw } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
@@ -49,6 +49,17 @@ const Navbar = () => {
                 </Link>
               </motion.div>
             ))}
+             <motion.button
+  onClick={() => window.location.reload()}
+  whileHover={{ scale: 1.05, rotate: 5 }}
+  whileTap={{ scale: 0.95 }}
+  className="flex items-center gap-2 px-4 py-2 rounded-lg
+  bg-cyan-500/10 border border-cyan-400/30 text-cyan-300
+  hover:bg-cyan-500/20 hover:text-white transition-all duration-300"
+>
+  <FiRefreshCw size={18} />
+  Refresh
+</motion.button>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -80,9 +91,21 @@ const Navbar = () => {
                 >
                   {link.name}
                 </Link>
+               
               </motion.div>
             ))}
           </div>
+           <motion.button
+  onClick={() => window.location.reload()}
+  whileHover={{ scale: 1.05, rotate: 5 }}
+  whileTap={{ scale: 0.95 }}
+  className="flex items-center gap-2 px-4 py-2 rounded-lg
+  bg-cyan-500/10 border border-cyan-400/30 text-cyan-300
+  hover:bg-cyan-500/20 hover:text-white transition-all duration-300"
+>
+  <FiRefreshCw size={18} />
+  Refresh
+</motion.button>
         </motion.div>
       </div>
     </nav>

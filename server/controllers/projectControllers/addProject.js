@@ -7,7 +7,7 @@ import Project from "../../models/project.js"
       description,
       techStack,
       githubLink,
-      liveDemo,
+      liveLink,
       image,
     } = req.body;
 
@@ -24,10 +24,10 @@ import Project from "../../models/project.js"
       description,
       techStack,
       githubLink,
-      liveDemo,
-image: req.file
-  ? req.file.path.replace(/\\/g, "/")
-  : "",
+      liveLink: req.body.liveLink,
+      image: req.file
+        ? req.file.path.replace(/\\/g, "/")
+        : "",
     });
    // console.log("image path:", req.file.path.replace(/\\/g, "/"));
 //console.log("file:", req.file);

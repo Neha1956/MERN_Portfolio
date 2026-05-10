@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 import { motion } from "motion/react";
 import {
@@ -7,26 +8,31 @@ import {
   FiMessageSquare,
   FiFolder,
   FiUser,
-  FiBell,
+  FiRefreshCw
 } from "react-icons/fi";
-//import ProjectActions from "../adminPages/manageProjects/ProjectActions";
+import { useDispatch, useSelector } from "react-redux";
+import { getMessages } from "../redux/messageSlice";
+import { getProjects } from "../redux/projectSlice";
+import { logout } from "../redux/authSlice";
 import { useNavigate } from "react-router-dom";
-import Message from "../adminPages/Message";
+import { toast } from "react-toastify";
 
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
-  const [messageCount, setMessageCount] = useState(5);
- // const [showMessages, setShowMessages] = useState(false);
+    const dispatch = useDispatch();
+    const { messages } = useSelector((state) => state.message);
+    const { projects } = useSelector((state) => state.projects);
+    const { profile } = useSelector((state) => state.profile);
 
- /* const messages = [
-    { id: 1, sender: "John Doe", text: "Hi, interested in your services", time: "5m ago" },
-    { id: 2, sender: "Jane Smith", text: "Great portfolio! Let's connect", time: "12m ago" },
-    { id: 3, sender: "Bob Wilson", text: "Can you work on my project?", time: "1h ago" },
-    { id: 4, sender: "Alice Johnson", text: "Love your work style", time: "2h ago" },
-    { id: 5, sender: "Charlie Brown", text: "Available for freelance?", time: "3h ago" },
-  ];
-*/
+    useEffect(() => {
+      dispatch(getMessages());
+      dispatch(getProjects());
+    }, [dispatch]);
+
+    const messageCount = messages?.length || 0;
+    const projectCount = projects?.length || 0;
+
   const menuItems = [
     {
       icon: FiFolder,
@@ -65,10 +71,13 @@ const AdminDashboard = () => {
     },
   };
 
-  const handleLogout = () => {
-    alert("Logged out successfully!");
-    // Add logout logic here
-  };
+    const handleLogout = () => {
+      dispatch(logout());
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      toast.success("Logged out successfully!");
+      navigate("/");
+    };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden">
@@ -111,22 +120,17 @@ const AdminDashboard = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
-              {/* Notifications */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative"
-              >
-                <button className="p-3 hover:bg-white/10 rounded-lg transition-colors relative">
-                  <FiBell size={24} className="text-cyan-400" />
-                  <motion.span
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"
-                  />
-                </button>
-              </motion.div>
-
+                <motion.button
+  onClick={() => window.location.reload()}
+  whileHover={{ scale: 1.05, rotate: 5 }}
+  whileTap={{ scale: 0.95 }}
+  className="flex items-center gap-2 px-4 py-2 rounded-lg
+  bg-cyan-500/10 border border-cyan-400/30 text-cyan-300
+  hover:bg-cyan-500/20 hover:text-white transition-all duration-300"
+>
+  <FiRefreshCw size={18} />
+  Refresh
+</motion.button>
               {/* Messages */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -148,9 +152,6 @@ const AdminDashboard = () => {
                     </motion.span>
                   )}
                 </button>
-
-               
-               
               </motion.div>
 
               {/* Logout Button */}
@@ -183,8 +184,9 @@ const AdminDashboard = () => {
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, Admin! 👋</h2>
               <p className="text-slate-300 text-lg">
-                You have <span className="text-cyan-400 font-semibold">{messageCount} new messages</span> and your
-                portfolio is looking great.
+                You have <span className="text-cyan-400 font-semibold">{messageCount} new {messageCount === 1 ? 'message' : 'messages'}</span>, 
+                <span className="text-violet-400 font-semibold"> {projectCount} {projectCount === 1 ? 'project' : 'projects'}</span>, and 
+                your portfolio is {profile ? 'looking great' : 'needs setup'}.
               </p>
             </motion.div>
 
@@ -238,12 +240,10 @@ const AdminDashboard = () => {
             {/* Stats Section */}
             <motion.div variants={itemVariants} className="space-y-4">
               <h3 className="text-2xl font-bold">Portfolio Stats</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                 {[
-                  { label: "Total Projects", value: "12", change: "+3 this month" },
-                  { label: "Profile Views", value: "1.2K", change: "+240 today" },
-                  { label: "Total Messages", value: "48", change: "5 unread" },
-                  { label: "Profile Visitors", value: "856", change: "+120 week" },
+                  { label: "Total Projects", value: projectCount, change: "From database" },
+                  { label: "Total Messages", value: messageCount, change: messageCount > 0 ? `${messageCount} received` : "No messages" },
                 ].map((stat) => (
                   <motion.div
                     key={stat.label}
@@ -269,6 +269,7 @@ const AdminDashboard = () => {
                 <FiLogOut size={20} />
                 Logout
               </motion.button>
+             
             </motion.div>
           </motion.div>
         </main>

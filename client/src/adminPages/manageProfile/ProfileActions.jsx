@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import {
   FiEdit,
-  FiTrash2,
+  
   FiUser,
   FiLinkedin,
   FiArrowLeft,
@@ -12,7 +12,7 @@ import {
 
 import { useSelector, useDispatch } from "react-redux";
 import axiosAPI from "../../api/axiosAPI";
-import { setProfile, deleteProfile } from "../../redux/profileSlice";
+import { setProfile,} from "../../redux/profileSlice";
 
 const ProfileActions = () => {
   const user = useSelector((state) => state.auth.user);
@@ -21,7 +21,7 @@ const ProfileActions = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const IMAGE_URL = "http://localhost:5000/";
+  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 
   // GET PROFILE
   const getProfile = async () => {
@@ -37,10 +37,8 @@ const ProfileActions = () => {
     getProfile();
   }, []);
 
-  // DELETE PROFILE (frontend only state reset)
-  const handleDelete = () => {
-    dispatch(deleteProfile());
-  };
+  
+ 
 
   // EDIT NAVIGATION
   const handleCreate = () => {
@@ -106,16 +104,19 @@ const ProfileActions = () => {
           {/* SKILLS */}
           <div className="bg-slate-900/50 p-4 rounded-xl">
             <p className="text-sm text-slate-400 mb-2">Skills</p>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills?.map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
+           <div className="flex flex-wrap gap-2">
+  {(profile.skills
+    ? JSON.parse(profile.skills.join(","))
+    : []
+  ).map((skill, idx) => (
+    <span
+      key={idx}
+      className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm"
+    >
+      {skill}
+    </span>
+  ))}
+</div>
           </div>
 
           {/* LINKEDIN */}
@@ -166,12 +167,7 @@ const ProfileActions = () => {
             <FiEdit /> Edit Profile
           </button>
 
-          <button
-            onClick={handleDelete}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500 hover:bg-red-600 transition font-semibold"
-          >
-            <FiTrash2 /> Delete
-          </button>
+         
         </div>
       </motion.div>
     </div>

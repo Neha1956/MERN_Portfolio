@@ -2,6 +2,7 @@ import express from "express";
 import {
   sendMessage,
   getMessages,
+  deleteMessage,
 } from "../controllers/contactController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -16,6 +17,13 @@ router.get(
   authMiddleware,
   adminMiddleware,
   getMessages
+);
+
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteMessage
 );
 
 export default router;
