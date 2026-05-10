@@ -14,30 +14,36 @@ const[form,setForm]=useState({
   role:""
 })
 const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  setForm({ ...form, [e.target.name]: e.target.value });
+};
 
 const handleSubmit = async (e) => {
-    e.preventDefault();
-try {
-  if (!form.email || !form.password || !form.role) {
-    toast.error("Please fill in all fields.");
-    return;
+  e.preventDefault();
+
+  try {
+    if (!form.email || !form.password || !form.role) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    const res = await axiosAPI.post("/users/login", form);
+
+    dispatch(login(res.data));
+    setShowModal(false);
+    toast.success("Login successful!");
+
+    if (res.data.user.role === "admin") {
+      navigate("/admin");
+    } else if (res.data.user.role === "user") {
+      navigate("/home");
+    } else {
+      toast.error("Invalid user role");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error("Login failed. Please check credentials.");
   }
-  const res = await axiosAPI.post("/users/login", form);
-  dispatch(login(res.data));
-  toast.success("Login successful!");
-  setShowModal(false);
- if (form.role === "admin") {
-  navigate("/admin");
-} else {
-  navigate("/home");
-}
-} catch (error) {
-  console.error("Login error:", error);
-  toast.error("Login failed. Please check your credentials and try again.");
-}
-}
+};
 
   return (
     <>

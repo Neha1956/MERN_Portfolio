@@ -11,20 +11,62 @@ import ProjectAction from "./adminPages/manageProjects/ProjectActions";
 import ProfileAction from "./adminPages/manageProfile/ProfileActions";
 import Message from "./adminPages/Message";
 import UpdateProject from "./adminPages/manageProjects/UpdateProject";
-
-
+import UpdateProfile from "./adminPages/manageProfile/UpdateProfile";
+import {ProtectedRoute,AdminRoute} from "./adminComponents/ProtectedRoute";
+import CreateProfile from "./adminPages/manageProfile/CreateProfile";
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/update-project/:id" element={<UpdateProject />} />
-         <Route path="/messages" element={<Message/>}/>
-         <Route path="/profile-actions" element={<ProfileAction/>}/>
-         <Route path="/project-actions" element={<ProjectAction/>}/>
-        <Route path="/add-project" element={<AddProjects/>}/>
-        <Route path="/admin" element={<Dashboard/>}/>
+        <Route path="/create-profile" element={
+          <AdminRoute>
+            <CreateProfile />
+          </AdminRoute>
+        } />  
+        <Route path="/edit-profile" element={
+          <AdminRoute>
+            <UpdateProfile />
+          </AdminRoute>
+        } />
+        <Route path="/update-project/:id" element={
+          <AdminRoute>
+          <UpdateProject />
+          </AdminRoute>
+          } />
+         <Route path="/messages" element={
+          <AdminRoute>
+            <Message/>
+          </AdminRoute>
+          }/>
+         <Route path="/profile-actions" element={
+          <AdminRoute>
+            <ProfileAction/>
+          </AdminRoute>
+          }/>
+         <Route path="/project-actions" element={
+          <AdminRoute>
+            <ProjectAction/>
+          </AdminRoute>
+          }/>
+        <Route path="/add-project" element={
+          <AdminRoute>
+          <AddProjects/>
+          </AdminRoute>
+          }/>
+       <Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <Dashboard />
+    </AdminRoute>
+  }
+/>
          <Route path="/" element={<LandingPage/>} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+          } />
         <Route path="/about" element={<About />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/projects" element={<Projects />} />
