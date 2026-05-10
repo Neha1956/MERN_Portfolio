@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axiosAPI from "../../api/axiosAPI";
 import { toast } from "react-toastify";
-import { setProfile } from "../../redux/profileSlice.jsx";
+import { setProfile } from "../../redux/profileSlice";
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
