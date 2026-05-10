@@ -7,8 +7,8 @@ import Contact from "./pages/Contact";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./adminComponents/Dashboard";
 import AddProjects from "./adminPages/manageProjects/AddProjects";
-import ProjectAction from "./adminPages/manageProjects/ProjectActions";
-import ProfileAction from "./adminPages/manageProfile/ProfileActions";
+import ProjectActions from "./adminPages/manageProjects/ProjectActions";
+import ProfileActions from "./adminPages/manageProfile/ProfileActions";
 import Message from "./adminPages/Message";
 import UpdateProject from "./adminPages/manageProjects/UpdateProject";
 import UpdateProfile from "./adminPages/manageProfile/UpdateProfile";
@@ -40,12 +40,12 @@ function App() {
           }/>
          <Route path="/profile-actions" element={
           <AdminRoute>
-            <ProfileAction/>
+            <ProfileActions/>
           </AdminRoute>
           }/>
          <Route path="/project-actions" element={
           <AdminRoute>
-            <ProjectAction/>
+            <ProjectActions/>
           </AdminRoute>
           }/>
         <Route path="/add-project" element={
