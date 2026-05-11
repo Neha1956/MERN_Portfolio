@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FaReact, FaNode, FaGitAlt, FaDocker } from "react-icons/fa";
 import { SiTypescript, SiMongodb, SiTailwindcss, SiJavascript, SiExpress, SiFirebase } from "react-icons/si";
 //import { useSelector } from "react-redux";

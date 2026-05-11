@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FiUpload, FiLink, FiGithub, FiX } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { addProject } from "../../redux/projectSlice";

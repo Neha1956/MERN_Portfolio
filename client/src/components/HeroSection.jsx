@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FiDownload, FiArrowRight, FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import TypingAnimation from "../components/TypingAnimation";

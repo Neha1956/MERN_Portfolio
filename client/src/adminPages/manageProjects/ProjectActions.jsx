@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FiEdit, FiTrash2, FiPlus, FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 //import AddProjects from "./AddProjects";

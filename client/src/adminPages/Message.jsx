@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FiMail, FiUser, FiArrowLeft, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

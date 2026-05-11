@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FiGithub, FiExternalLink } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";

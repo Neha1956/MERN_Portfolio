@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 const TypingAnimation = ({ text, speed = 100 }) => {
   const [displayedText, setDisplayedText] = useState("");
