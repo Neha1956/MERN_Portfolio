@@ -1,4 +1,5 @@
 import Project from "../../models/project.js"
+import { toDataUri } from "../../utils/assets.js";
 const updateProject = async (req, res) => {
   try {
     const updateData = {
@@ -6,7 +7,7 @@ const updateProject = async (req, res) => {
     };
 
     if (req.file) {
-      updateData.image = req.file.path;
+      updateData.image = toDataUri(req.file);
     }
 
     const updatedProject = await Project.findByIdAndUpdate(
@@ -21,9 +22,14 @@ const updateProject = async (req, res) => {
       });
     }
 
+    const responseProject = updatedProject.toObject();
+    if (responseProject.image?.startsWith("data:")) {
+      responseProject.image = `/api/projects/image/${responseProject._id}`;
+    }
+
     res.status(200).json({
       message: "Project updated successfully",
-      project: updatedProject,
+      project: responseProject,
     });
   } catch (error) {
     res.status(500).json({

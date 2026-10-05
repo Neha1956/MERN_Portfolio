@@ -1,4 +1,5 @@
 import Project from "../../models/project.js"
+import { toDataUri } from "../../utils/assets.js";
 
  const addProject = async (req, res) => {
   try {
@@ -8,7 +9,6 @@ import Project from "../../models/project.js"
       techStack,
       githubLink,
       liveLink,
-      image,
     } = req.body;
 
     //console.log("Received project data:", req.body);
@@ -24,19 +24,22 @@ import Project from "../../models/project.js"
       description,
       techStack,
       githubLink,
-      liveLink: req.body.liveLink,
+      liveLink,
       image: req.file
-        ? req.file.path.replace(/\\/g, "/")
+        ? toDataUri(req.file)
         : "",
     });
-   // console.log("image path:", req.file.path.replace(/\\/g, "/"));
-//console.log("file:", req.file);
-//console.log("newProject:", newProject);
+    const responseProject = newProject.toObject();
+    if (responseProject.image?.startsWith("data:")) {
+      responseProject.image = `/api/projects/image/${responseProject._id}`;
+    }
+
     res.status(201).json({
       message: "Project added successfully",
-      project: newProject,
+      project: responseProject,
     });
   } catch (error) {
+    console.error("Failed to add project:", error);
     res.status(500).json({
       message: "Internal server error",
     });

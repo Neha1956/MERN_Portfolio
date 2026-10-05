@@ -7,6 +7,7 @@ import {
   getProfile,
   updateProfile,
   createProfile,
+  getProfileAsset,
 } from "../controllers/profileController.js";
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.post(
 
 // GET PROFILE (public or protected)
 router.get("/get", getProfile);
+router.get("/asset/:id/:field", getProfileAsset);
 
 // UPDATE PROFILE (admin only)
 router.put(

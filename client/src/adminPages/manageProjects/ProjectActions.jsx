@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect} from "react";
 import axiosAPI from "../../api/axiosAPI";
 import { toast } from "react-toastify";
+import assetUrl from "../../utils/assetUrl";
 
 const ProjectAction = () => {
     const navigate = useNavigate();
@@ -27,16 +28,17 @@ const [projects, setProjects] = useState([]);
 };
 
 
-const fetchProjects = async () => {
-  try {
-    const res = await axiosAPI.get("/projects/get");
-    setProjects(res.data.projects);
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to fetch projects");
-  }
-};
 useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const res = await axiosAPI.get("/projects/get");
+      setProjects(res.data.projects);
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+      toast.error("Failed to fetch projects");
+    }
+  };
+
   fetchProjects();
 }, []);
   return (
@@ -45,7 +47,7 @@ useEffect(() => {
          <motion.button
           whileHover={{ scale: 1.05 }}
           onClick={() => navigate("/admin")}
-          className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-4xl flex items-center justify-center  font-semibold"
+          className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center  font-semibold"
         >
           <FiArrowLeft size={22}/> 
         </motion.button>
@@ -58,7 +60,7 @@ useEffect(() => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           onClick={() => setToggle(true)}
-          className="p-6 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-4xl flex items-center justify-center gap-3 font-semibold"
+          className="p-4 mb-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center gap-3 font-semibold"
         >
           <FiPlus /> Create New Project
         </motion.button>
@@ -75,8 +77,10 @@ useEffect(() => {
     className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md shadow-lg"
   >
     <img
-      src={`http://localhost:5000/${project.image}`}
+      src={assetUrl(project.image)}
       alt={project.title}
+      loading="lazy"
+      decoding="async"
       className="w-full h-44 object-cover rounded-xl mb-4"
     />
 

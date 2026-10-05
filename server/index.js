@@ -8,7 +8,7 @@ import profileRoute from "./routes/profileRoute.js";
 import cookieParser from "cookie-parser";
 import contactRoute from "./routes/contactRoute.js";
 import cors from "cors";
-import path from "path";
+import { handleUploadError } from "./middleware/upload.js";
 dotenv.config();
 connectDB(process.env.MONGO_URI);
 
@@ -30,6 +30,7 @@ app.use("/api/users",userRoute);
 app.use("/api/projects",projectRoute);
 app.use("/api/profile",profileRoute);
 app.use("/api/contact",contactRoute);
+app.use(handleUploadError);
 
 app.get("/",(req,res)=>{
     res.send("hello world");
